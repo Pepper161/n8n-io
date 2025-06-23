@@ -22,8 +22,9 @@ COPY tsconfig.json ./
 COPY turbo.json ./
 COPY biome.jsonc ./
 
-# Install dependencies and build (skip all scripts including prepare)
-RUN pnpm install --frozen-lockfile --ignore-scripts
+# Install dependencies and build (set DOCKER_BUILD to skip lefthook)
+ENV DOCKER_BUILD=true
+RUN pnpm install --frozen-lockfile
 RUN pnpm build
 
 # Expose port
