@@ -1,0 +1,36 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/n8n-repo/n8n:$COMMIT_SHA', '-f', 'Dockerfile.simple', '.']
+  
+  # Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/n8n-repo/n8n:$COMMIT_SHA']
+  
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'n8n-service'
+      - '--image'
+      - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/n8n-repo/n8n:$COMMIT_SHA'
+      - '--region'
+      - 'asia-northeast1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
+      - '--memory'
+      - '2Gi'
+      - '--cpu'
+      - '2'
+      - '--max-instances'
+      - '10'
+      - '--set-env-vars'
+      - 'N8N_ENCRYPTION_KEY=your-encryption-key-here'
+
+images:
+  - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/n8n-repo/n8n:$COMMIT_SHA'
