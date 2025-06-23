@@ -22,9 +22,8 @@ COPY tsconfig.json ./
 COPY turbo.json ./
 COPY biome.jsonc ./
 
-# Install dependencies and build (with lefthook skip)
-ENV SKIP_PREPARE=true
-RUN pnpm install --frozen-lockfile
+# Install dependencies and build (skip all scripts including prepare)
+RUN pnpm install --frozen-lockfile --ignore-scripts
 RUN pnpm build
 
 # Expose port
