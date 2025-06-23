@@ -11,13 +11,18 @@ COPY tsconfig.json biome.jsonc ./
 
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
-# Build only core packages needed for n8n
+# Build packages in correct dependency order
 RUN pnpm --filter="@n8n/constants" build
-RUN pnpm --filter="@n8n/utils" build  
+RUN pnpm --filter="@n8n/di" build
+RUN pnpm --filter="@n8n/utils" build
+RUN pnpm --filter="@n8n/permissions" build
 RUN pnpm --filter="@n8n/config" build
+RUN pnpm --filter="@n8n/api-types" build
+RUN pnpm --filter="@n8n/backend-common" build
 RUN pnpm --filter="@n8n/db" build
 RUN pnpm --filter="n8n-workflow" build
 RUN pnpm --filter="n8n-core" build
+RUN pnpm --filter="n8n-nodes-base" build
 RUN pnpm --filter="n8n" build
 
 EXPOSE 5678
