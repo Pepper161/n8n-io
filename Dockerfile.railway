@@ -10,7 +10,12 @@ COPY packages ./packages
 COPY tsconfig.json biome.jsonc ./
 
 RUN pnpm install --frozen-lockfile --ignore-scripts
-RUN pnpm build
+
+# Install global build tools
+RUN pnpm add -g tsup
+
+# Build the application (skip problematic packages)
+RUN pnpm build --filter="!@n8n/extension-sdk"
 
 EXPOSE 5678
 
