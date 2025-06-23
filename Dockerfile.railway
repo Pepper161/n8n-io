@@ -11,11 +11,14 @@ COPY tsconfig.json biome.jsonc ./
 
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
-# Install global build tools
-RUN pnpm add -g tsup
-
-# Build the application (skip problematic packages)
-RUN pnpm build --filter="!@n8n/extension-sdk"
+# Build only core packages needed for n8n
+RUN pnpm --filter="@n8n/constants" build
+RUN pnpm --filter="@n8n/utils" build  
+RUN pnpm --filter="@n8n/config" build
+RUN pnpm --filter="@n8n/db" build
+RUN pnpm --filter="n8n-workflow" build
+RUN pnpm --filter="n8n-core" build
+RUN pnpm --filter="n8n" build
 
 EXPOSE 5678
 
